@@ -31,12 +31,6 @@
 
 #include <bondcpp/bond.hpp>
 
-#ifdef _WIN32
-#include <Rpc.h>
-#else
-#include <uuid/uuid.h>
-#endif
-
 #include <algorithm>
 #include <chrono>
 #include <functional>
@@ -47,6 +41,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
+
+#ifdef _WIN32
+#include <Rpc.h>
+#else
+#include <uuid/uuid.h>
+#endif
 
 using namespace std::chrono_literals;
 

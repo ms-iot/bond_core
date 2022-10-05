@@ -16,10 +16,16 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(smclib REQUIRED)
 find_package(Threads REQUIRED)
 
+if (WIN32)
+    add_definitions(-D_USE_MATH_DEFINES)
+    add_definitions(-DNOMINMAX)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(UUID REQUIRED uuid)
 # we have to find the absolute path to uuid as target_link_directories is not available before cmake 3.13
 find_library(uuid_ABS_PATH ${UUID_LIBRARIES} PATHS ${UUID_LIBRARY_DIRS})
+endif()
 
 add_library(${PROJECT_NAME}
   SHARED
@@ -34,8 +40,12 @@ ament_target_dependencies(${PROJECT_NAME}
   rclcpp
   rclcpp_lifecycle
   smclib)
-target_link_libraries(${PROJECT_NAME} ${uuid_ABS_PATH})
-
+if (WIN32)
+  # for UUID libs
+  target_link_libraries(${PROJECT_NAME} Rpcrt4)
+else()
+  target_link_libraries(${PROJECT_NAME} ${uuid_ABS_PATH})
+endif()
 install(
   TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
